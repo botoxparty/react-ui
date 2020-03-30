@@ -26,7 +26,7 @@ import { emails } from './dummyData'
 
 const Messages = ({ messages }) =>
   messages.map(message => (
-    <Grid css={{ marginBottom: '1.5em !important' }}>
+    <Grid key={message.subject} css={{ marginBottom: '1.5em !important' }}>
       <Column span={1}>
         {message.star && (
           <svg
@@ -56,10 +56,11 @@ const Messages = ({ messages }) =>
 
 function App() {
   const [selectedLabel, selectLabel] = React.useState('Inbox')
+  const [filterFrom, setFilterFrom] = React.useState('')
 
   const options = emails.map((email, index) => ({
     value: index,
-    label: email.subject
+    label: email.from
   }))
 
   const autocompleteProvider = value => {
@@ -154,26 +155,42 @@ function App() {
         >
           <Element
             style={{
-              height: '100vh',
+              maxHeight: '100%',
               paddinY: [5, 5, 10],
               paddingX: [5, 5, 10],
               color: 'text.body'
             }}
           >
-            <Breadcrumb marginBottom={3}>
-              <Link href="/home">Home</Link>
-              <span>{selectedLabel}</span>
-            </Breadcrumb>
+            <Element
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <Breadcrumb marginBottom={3}>
+                <Link href="/home">Home</Link>
+                <span>{selectedLabel}</span>
+              </Breadcrumb>
 
-            <Dropdown
-              options={options}
-              autocompleteProvider={autocompleteProvider}
-              showOptionsOnFocus={true}
-              css={{ marginBottom: '2em !important' }}
-            />
-
+              <Dropdown
+                options={options}
+                value={filterFrom}
+                autocompleteProvider={autocompleteProvider}
+                showOptionsOnFocus={true}
+                placeholder={'Search Contacts'}
+                onSelect={option => setFilterFrom(option)}
+                onClear={() => setFilterFrom('')}
+              />
+            </Element>
             <Stack direction="vertical">
-              <Messages messages={emails} />
+              <Messages
+                messages={
+                  filterFrom
+                    ? emails.filter(email => email.from === filterFrom.label)
+                    : emails
+                }
+              />
             </Stack>
           </Element>
         </Column>
