@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Dropdown } from './dropdown'
 import {
   Form,
   Text,
@@ -25,6 +25,19 @@ import theme from './theme.js'
 
 function App() {
   const [selectedLabel, selectLabel] = React.useState('Inbox')
+
+  const options = [
+    { value: 'asdf', label: 'Ojksdf skjdfhsdf' },
+    { value: 'sadfssdf', label: 'Another thing to worry' },
+    { value: 'sadfasf', label: 'about another thing' },
+    { value: 'asdf', label: 'everything to worry' },
+    { value: 'asdfasdfs', label: 'about everything is worse' },
+    { value: 'retwert', label: 'whats worse than everything' }
+  ]
+
+  const autocompleteProvider = value => {
+    return options.filter(option => option.label.includes(value))
+  }
 
   return (
     <ThemeProvider theme={theme} designMode>
@@ -122,6 +135,11 @@ function App() {
               <Link href="/home">Home</Link>
               <span>{selectedLabel}</span>
             </Breadcrumb>
+
+            <Dropdown
+              options={options}
+              autocompleteProvider={autocompleteProvider}
+            />
 
             <Stack direction="vertical">
               <Grid>
