@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dropdown } from './dropdown'
+import { Dropdown } from 'react-ui'
 import {
   Form,
   Text,
@@ -22,21 +22,50 @@ import { Sidebar, Badge } from './sidebar'
 
 import './style.css'
 import theme from './theme.js'
+import { emails } from './dummyData'
+
+const Messages = ({ messages }) =>
+  messages.map(message => (
+    <Grid css={{ marginBottom: '1.5em !important' }}>
+      <Column span={1}>
+        {message.star && (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 240 240"
+            width="1.5em"
+            height="1.5em"
+          >
+            <path fill="#F8D64E" d="m48,234 73-226 73,226-192-140h238z" />
+          </svg>
+        )}
+      </Column>
+      <Column span={[10, 2, 2]}>
+        <Text>{message.from}</Text>
+      </Column>
+      <Column span={[1, 0, 0]}>
+        <Text>{message.date}</Text>
+      </Column>
+
+      <Column span={[12, 8, 8]}>
+        <Text>{message.subject} - </Text>
+        <Text color="text.subtle">{message.preview}</Text>
+      </Column>
+      <Column span={[0, 1, 1]}>12/20/19</Column>
+    </Grid>
+  ))
 
 function App() {
   const [selectedLabel, selectLabel] = React.useState('Inbox')
 
-  const options = [
-    { value: 'asdf', label: 'Ojksdf skjdfhsdf' },
-    { value: 'sadfssdf', label: 'Another thing to worry' },
-    { value: 'sadfasf', label: 'about another thing' },
-    { value: 'asdf', label: 'everything to worry' },
-    { value: 'asdfasdfs', label: 'about everything is worse' },
-    { value: 'retwert', label: 'whats worse than everything' }
-  ]
+  const options = emails.map((email, index) => ({
+    value: index,
+    label: email.subject
+  }))
 
   const autocompleteProvider = value => {
-    return options.filter(option => option.label.includes(value))
+    return options.filter(option =>
+      option.label.toLowerCase().includes(value.toLowerCase())
+    )
   }
 
   return (
@@ -139,27 +168,12 @@ function App() {
             <Dropdown
               options={options}
               autocompleteProvider={autocompleteProvider}
+              showOptionsOnFocus={true}
+              css={{ marginBottom: '2em !important' }}
             />
 
             <Stack direction="vertical">
-              <Grid>
-                <Column span={1}>star</Column>
-                <Column span={[10, 2, 2]}>
-                  <Text>chantastic</Text>
-                </Column>
-                <Column span={[1, 0, 0]}>
-                  <Text>12/20/19</Text>
-                </Column>
-
-                <Column span={[12, 8, 8]}>
-                  <Text>Stride Your Limp -</Text>
-                  <Text color="text.subtle">
-                    I don't trust anyone who doesn't walk with a limp —
-                    metaphorically, of course. Losing leaves a mark.
-                  </Text>
-                </Column>
-                <Column span={[0, 1, 1]}>12/20/19</Column>
-              </Grid>
+              <Messages messages={emails} />
             </Stack>
           </Element>
         </Column>
@@ -169,7 +183,6 @@ function App() {
 }
 
 export default App
-
 // <Form>
 //               <Form.Header as="h2">Update profile details</Form.Header>
 //               <Form.Field label="Full name" isRequired>

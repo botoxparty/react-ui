@@ -1,10 +1,17 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Input } from 'react-ui'
+import { Input } from '../Input'
 import { Element } from '@ds-tools/primitives'
 
 /** Description of an input */
-function Dropdown({ invalid, css, autocompleteProvider, options, ...props }) {
+function Dropdown({
+  invalid,
+  css,
+  autocompleteProvider,
+  options,
+  showOptionsOnFocus,
+  ...props
+}) {
   const [value, setValue] = useState('')
   const [focused, setFocused] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
@@ -16,7 +23,7 @@ function Dropdown({ invalid, css, autocompleteProvider, options, ...props }) {
   const hasValue = !!value
 
   const selectOption = option => {
-    setValue('')
+    setValue(option.label)
     setActiveIndex(null)
     props.onSelect && props.onSelect(option)
   }
@@ -65,7 +72,11 @@ function Dropdown({ invalid, css, autocompleteProvider, options, ...props }) {
   }
   return (
     <>
-      <Element as="div" css={{ position: 'relative' }}>
+      <Element
+        as="div"
+        component="Dropdown"
+        css={{ ...css, position: 'relative' }}
+      >
         <Element as="div" css={styles.InputWrapper}>
           <Input
             value={value}
@@ -74,7 +85,8 @@ function Dropdown({ invalid, css, autocompleteProvider, options, ...props }) {
             onChange={e => setInputValue(e.target.value)}
           ></Input>
         </Element>
-        {hasValue && focused && (
+        {((hasValue && focused) ||
+          (!hasValue && showOptionsOnFocus && focused)) && (
           <Element
             as="ul"
             css={{
@@ -98,7 +110,7 @@ function Dropdown({ invalid, css, autocompleteProvider, options, ...props }) {
           >
             {options.map((option, index) => (
               <Option
-                key={option.value}
+                key={`${index}-${option.value}`}
                 active={activeIndex === index}
                 option={option}
               />

@@ -1,5 +1,6 @@
 export * from './src/components/avatar'
 export * from './src/components/button'
+export * from './src/components/dropdown'
 export * from './src/components/heading'
 export * from './src/components/image'
 export * from './src/components/input'
